@@ -1,0 +1,93 @@
+cabal-version:      2.4
+name:               aoc2022
+version:            0.1.0.0
+
+synopsis: AOC 2022 Solutions
+
+-- description:
+
+license: MIT
+author:             Brian Magnuson
+maintainer:         bdmagnuson@gmail.com
+
+copyright: (C) 2022 Brian Magnuson
+-- category:
+-- extra-source-files: CHANGELOG.md
+
+library
+  exposed-modules: Aoc2022.Day01,
+                   Aoc2022.Day02,
+                   Aoc2022.Day03,
+                   Aoc2022.Day04,
+                   Aoc2022.Day05,
+                   Aoc2022.Day06,
+                   Aoc2022.Day07,
+                   Aoc2022.Day08,
+                   Aoc2022.Day09,
+                   Aoc2022.Day10,
+                   Aoc2022.Day11,
+                   Aoc2022.Day12,
+                   Aoc2022.Day13,
+                   Aoc2022.Day14,
+                   Aoc2022.Day15,
+                   Aoc2022.Day16,
+                   Aoc2022.Day17,
+                   Aoc2022.Day18,
+                   Aoc2022.Day19,
+                   Aoc2022.Day20,
+                   Aoc2022.Day21,
+                   Aoc2022.Day22,
+                   Aoc2022.Day23,
+                   Aoc2022.Day24,
+                   Aoc2022.Day25
+
+  other-modules: Aoc2022.AocUtils
+
+  hs-source-dirs:   src
+
+  ghc-options: -O2
+
+  default-extensions:    OverloadedStrings
+                       , TemplateHaskell
+                       , GADTs
+                       , TypeFamilies
+                       , ImportQualifiedPost
+                       , LambdaCase
+                       , BangPatterns
+                       , FlexibleContexts
+                       , RankNTypes
+                       , DeriveDataTypeable
+                       , DeriveFunctor
+                       , InstanceSigs
+
+  build-depends:         base >= 4.13
+                       , attoparsec
+                       , text
+                       , mtl
+                       , containers
+                       , hashmap
+                       , lens
+                       , vector
+                       , algebraic-graphs
+                       , memoize
+                       , transformers
+                       , heap
+                       , JuicyPixels
+                       , linear
+                       , random
+                       , split
+                       , QuickCheck
+                       , test-invariant
+
+  default-language:    GHC2021
+
+executable Aoc2022
+  default-language: GHC2021
+  hs-source-dirs: app
+  main-is: Main.hs
+  build-depends:         base >= 4.13
+                       , aoc2022
+                       , criterion
+
+  default-extensions:  ImportQualifiedPost
+  ghc-options: -O2
