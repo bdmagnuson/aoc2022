@@ -8,7 +8,7 @@ import Aoc2022.AocUtils
 import Control.Applicative
 import Data.Attoparsec.Text qualified as P
 
-data Sign = Rock | Paper | Scissors deriving (Show)
+data Sign = Rock | Paper | Scissors
 
 data Outcome = Win | Lose | Draw
 
@@ -36,42 +36,29 @@ toOutcome = \case
   'Z' -> Win
 
 score :: (Sign, Sign) -> Int
-score (s1, s2) = outcome + play
-  where
-    outcome =
-      case (s1, s2) of
-        (Rock, Paper) -> 6
-        (Rock, Rock) -> 3
-        (Rock, Scissors) -> 0
-        (Paper, Scissors) -> 6
-        (Paper, Paper) -> 3
-        (Paper, Rock) -> 0
-        (Scissors, Rock) -> 6
-        (Scissors, Scissors) -> 3
-        (Scissors, Paper) -> 0
-    play =
-      case s2 of
-        Rock -> 1
-        Paper -> 2
-        Scissors -> 3
+score (Rock, Rock) = 3 + 1
+score (Rock, Paper) = 6 + 2
+score (Rock, Scissors) = 0 + 3
+score (Paper, Rock) = 0 + 1
+score (Paper, Paper) = 3 + 2
+score (Paper, Scissors) = 6 + 3
+score (Scissors, Rock) = 6 + 1
+score (Scissors, Paper) = 0 + 2
+score (Scissors, Scissors) = 3 + 3
 
-adjust :: (Sign, Outcome) -> (Sign, Sign)
-adjust (s1, s2) = (s1, fixed)
-  where
-    fixed =
-      case (s1, s2) of
-        (Rock, Lose) -> Scissors
-        (Rock, Draw) -> Rock
-        (Rock, Win) -> Paper
-        (Paper, Lose) -> Rock
-        (Paper, Draw) -> Paper
-        (Paper, Win) -> Scissors
-        (Scissors, Lose) -> Paper
-        (Scissors, Draw) -> Scissors
-        (Scissors, Win) -> Rock
+adjust :: Sign -> Outcome -> Sign
+adjust Rock Lose = Scissors
+adjust Rock Draw = Rock
+adjust Rock Win = Paper
+adjust Paper Lose = Rock
+adjust Paper Draw = Paper
+adjust Paper Win = Scissors
+adjust Scissors Lose = Paper
+adjust Scissors Draw = Scissors
+adjust Scissors Win = Rock
 
 convert f g = map (\(x, y) -> (f x, g y))
 
 part1 = sum (map score (convert toSign toSign input))
 
-part2 = sum (map (score . adjust) (convert toSign toOutcome input))
+part2 = sum (map (score . \(x, y) -> (x, adjust x y)) (convert toSign toOutcome input))
