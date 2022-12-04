@@ -78,6 +78,8 @@ library
                        , split
                        , QuickCheck
                        , test-invariant
+                       , aeson
+                       , bytestring
 
   default-language:    GHC2021
 
