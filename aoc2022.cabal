@@ -80,6 +80,7 @@ library
                        , test-invariant
                        , aeson
                        , bytestring
+                       , time
 
   default-language:    GHC2021
 
