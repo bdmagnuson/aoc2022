@@ -81,6 +81,10 @@ library
                        , aeson
                        , bytestring
                        , time
+                       , data-fix
+                       , deriving-compat
+                       , free
+                       , comonad
 
   default-language:    GHC2021
 
