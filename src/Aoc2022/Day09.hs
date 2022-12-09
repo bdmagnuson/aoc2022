@@ -17,11 +17,7 @@ data Move = R | L | U | D deriving (Show)
 
 type Pt = (Int, Int)
 
-data St = St
-  { _knot :: [Pt],
-    _visited :: S.Set Pt
-  }
-  deriving (Show)
+data St = St {_knot :: [Pt]} deriving (Show)
 
 input :: [Move]
 input = getInput "input/day09.txt" parser
@@ -36,7 +32,7 @@ parser = concat <$> many (pMove <* P.endOfLine)
 
 makeLenses ''St
 
-moveHead :: Move -> State St ()
+moveHead :: Move -> State St Pt
 moveHead m = do
   case m of
     R -> update 0 1 0
@@ -46,7 +42,7 @@ moveHead m = do
   len <- uses knot length
   mapM_ follow [0 .. len - 2]
   t <- use knot
-  visited %= S.insert (last t)
+  return $ last t
   where
     follow i = do
       (hx, hy) <- uses knot (^?! ix i)
@@ -58,9 +54,9 @@ moveHead m = do
       knot . ix i . _1 += dx
       knot . ix i . _2 += dy
 
-solve x = S.size (view visited (execState (traverse moveHead input) (initialSt x)))
+solve x = (S.size . S.fromList) (evalState (traverse moveHead input) (initialSt x))
   where
-    initialSt x = St (replicate x (0, 0)) (S.singleton (0, 0))
+    initialSt x = St (replicate x (0, 0))
 
 part1 = solve 2
 
