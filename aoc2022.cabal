@@ -59,6 +59,7 @@ library
                        , DeriveDataTypeable
                        , DeriveFunctor
                        , InstanceSigs
+                       , DataKinds
 
   build-depends:         base >= 4.13
                        , attoparsec
