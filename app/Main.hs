@@ -58,24 +58,24 @@ main = do
   putStrLn $ "Day10 part 2: "
   Day10.part2
 
---
---  putStrLn $ "Day11 part 1: " ++ (show Day11.part1)
---  putStrLn $ "Day11 part 1: " ++ (show Day11.part2)
---
---  putStrLn $ "Day12 part 1: " ++ (show Day12.part1)
---  putStrLn $ "Day12 part 1: " ++ (show Day12.part2)
---
---  putStrLn $ "Day13 part 1: " ++ (show Day13.part1)
---  putStrLn $ "Day13 part 2: " ++ (show Day13.part2)
---
---  putStrLn $ "Day14 part 1: " ++ (show Day14.part1)
---  putStrLn $ "Day14 part 2: " ++ (show Day14.part2)
---
---  putStrLn $ "Day15 part 1: " ++ (show Day15.part1)
---  putStrLn $ "Day15 part 2: " ++ (show Day15.part2)
---
---  putStrLn $ "Day16 part 1: " ++ (show Day16.part1)
---  putStrLn $ "Day16 part 2: " ++ (show Day16.part2)
+  putStrLn $ "Day11 part 1: " ++ (show Day11.part1)
+  putStrLn $ "Day11 part 1: " ++ (show Day11.part2)
+
+  putStrLn $ "Day12 part 1: " ++ (show Day12.part1)
+  putStrLn $ "Day12 part 1: " ++ (show Day12.part2)
+
+  putStrLn $ "Day13 part 1: " ++ (show Day13.part1)
+  putStrLn $ "Day13 part 2: " ++ (show Day13.part2)
+
+  putStrLn $ "Day14 part 1: " ++ (show Day14.part1)
+  putStrLn $ "Day14 part 2: " ++ (show Day14.part2)
+
+  putStrLn $ "Day15 part 1: " ++ (show Day15.part1)
+  putStrLn $ "Day15 part 2: " ++ (show Day15.part2)
+
+  putStrLn $ "Day16 part 1: " ++ (show Day16.part1)
+  putStrLn $ "Day16 part 2: " ++ (show Day16.part2)
+
 --
 --  putStrLn $ "Day17 part 1: " ++ (show Day17.part1)
 --  putStrLn $ "Day17 part 2: " ++ (show Day17.part2)

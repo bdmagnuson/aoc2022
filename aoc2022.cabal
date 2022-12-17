@@ -41,7 +41,8 @@ library
                    Aoc2022.Day24,
                    Aoc2022.Day25
 
-  other-modules: Aoc2022.AocUtils
+  other-modules: Aoc2022.AocUtils,
+                 Advent.Box
 
   hs-source-dirs:   src
 
