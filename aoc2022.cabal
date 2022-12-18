@@ -87,6 +87,7 @@ library
                        , deriving-compat
                        , free
                        , comonad
+                       , statistics
 
   default-language:    GHC2021
 
