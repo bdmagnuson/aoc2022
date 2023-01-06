@@ -73,7 +73,7 @@ printBoard b = mapM_ printMember (b ^. members)
             printf "%d %s, %s" d (solveTime d (t1 ^. get_star_ts)) (solveTime d (t2 ^. get_star_ts)) >> putStrLn ""
 
 main = do
-  b <- B.readFile "trial.txt"
+  b <- B.readFile "534723.json"
   case decode b :: Maybe LeaderBoard of
     Nothing -> putStrLn "Failed to parse"
     Just json -> printBoard json

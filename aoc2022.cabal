@@ -88,6 +88,9 @@ library
                        , free
                        , comonad
                        , statistics
+                       , recursion-schemes
+                       , adjunctions
+                       , distributive
 
   default-language:    GHC2021
 
