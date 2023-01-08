@@ -35,6 +35,6 @@ overlap :: Pair -> Bool
 overlap p@(Pair (Range l1 r1) (Range l2 r2)) =
   contains p || (l1 <= l2 && r1 >= l2) || (l1 <= r2 && r1 >= r2)
 
-part1 = sum . map ((\x -> if x then 1 else 0) . contains) $ input
+part1 = length . filter contains $ input
 
-part2 = sum . map ((\x -> if x then 1 else 0) . overlap) $ input
+part2 = length . filter overlap $ input

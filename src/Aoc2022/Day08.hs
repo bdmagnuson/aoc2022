@@ -35,7 +35,7 @@ shorter :: (Int, Int) -> (Int, Int) -> Bool
 shorter p a = grid ^?! ix a < grid ^?! ix p
 
 visable :: (Int, Int) -> Bool
-visable p = or (map (all (shorter p)) [vNorth p, vWest p, vEast p, vSouth p])
+visable p = any (all (shorter p)) [vNorth p, vWest p, vEast p, vSouth p]
 
 scenic :: (Int, Int) -> Int
 scenic p = product (map f [vNorth p, vWest p, vEast p, vSouth p])
@@ -45,6 +45,6 @@ scenic p = product (map f [vNorth p, vWest p, vEast p, vSouth p])
     add (False : _) = 1
     add (True : xs) = 1 + add xs
 
-part1 = sum (map ((\x -> if x then 1 else 0) . visable) pts)
+part1 = length . filter visable $ pts
 
 part2 = maximum (map scenic pts)

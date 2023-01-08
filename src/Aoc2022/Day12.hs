@@ -13,7 +13,7 @@ import Data.Char (isAlpha)
 import Data.Heap qualified as H
 import Data.List (find)
 import Data.Map qualified as M
-import Data.Maybe (catMaybes, fromJust)
+import Data.Maybe (mapMaybe, fromJust)
 import Data.Set qualified as S
 
 data Point = Start | End | Height Char deriving (Show, Eq)
@@ -77,11 +77,11 @@ path start end g = go (newNodes 0 start) S.empty
       | otherwise = go h' s'
       where
         Just (cost, dst) = H.viewHead h
-        h' = (H.drop 1 h) `H.union` (newNodes cost dst)
+        h' = H.drop 1 h `H.union` newNodes cost dst
         s' = S.insert dst s
     adj = G.adjacencyMap g
     newNodes :: Int -> Coord -> Next
-    newNodes cost dst = H.fromList . S.toList . S.map (\n -> (cost + 1, n)) $ (adj ^?! ix dst)
+    newNodes cost dst = H.fromList . S.toList . S.map (cost + 1,) $ (adj ^?! ix dst)
 
 (m, st, end) = start input
 
@@ -89,6 +89,6 @@ g = mkGraph m
 
 part1 = path st end g
 
-part2 = minimum . catMaybes $ map (\x -> path x end g) startPoints
+part2 = minimum (mapMaybe (\x -> path x end g) startPoints)
   where
     startPoints = M.keys (M.filter (== 'a') m)

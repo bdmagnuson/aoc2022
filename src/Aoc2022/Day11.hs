@@ -24,7 +24,7 @@ data Part = Part1 | Part2 deriving (Eq)
 
 data Rhs = Dig Integer | Old
 
-data St = St {_monkeys :: [Monkey]}
+newtype St = St {_monkeys :: [Monkey]}
 
 makeLenses ''St
 
@@ -44,9 +44,9 @@ parser = P.sepBy1 pMonkey P.endOfLine
         rhs <- (Dig <$> P.decimal) <|> (Old <$ P.string "old")
         P.endOfLine
         return $ case (c, rhs) of
-          ('+', Dig x) -> \y -> y + x
-          ('+', Old) -> \y -> y + y
-          ('*', Dig x) -> \y -> y * x
+          ('+', Dig x) -> (+x)
+          ('+', Old) -> (*2)
+          ('*', Dig x) -> (*x)
           ('*', Old) -> \y -> y * y
       (dest, div) <- do
         P.string "  Test: divisible by "
@@ -55,7 +55,7 @@ parser = P.sepBy1 pMonkey P.endOfLine
         t <- P.decimal <* P.endOfLine
         P.string "    If false: throw to monkey "
         f <- P.decimal <* P.endOfLine
-        return $ (\x -> if x `mod` d == 0 then t else f, d)
+        return (\x -> if x `mod` d == 0 then t else f, d)
       return $ Monkey items op dest 0 div
 
 input = getInput "input/day11.txt" parser
@@ -80,7 +80,7 @@ doRound :: Part -> St -> St
 doRound p ms = execState (traverse (toss p) [0 .. length (ms ^. monkeys) - 1]) ms
 
 play :: Part -> Int -> St
-play p i = (iterate (doRound p) (St input)) !! i
+play p i = iterate (doRound p) (St input) !! i
 
 modulus = foldl1 lcm (map (view divisor) input)
 

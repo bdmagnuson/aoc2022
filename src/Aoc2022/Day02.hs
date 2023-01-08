@@ -7,6 +7,7 @@ where
 import Aoc2022.AocUtils
 import Control.Applicative
 import Data.Attoparsec.Text qualified as P
+import Data.Bifunctor (bimap)
 
 data Sign = Rock | Paper | Scissors
 
@@ -57,8 +58,6 @@ adjust Scissors Lose = Paper
 adjust Scissors Draw = Scissors
 adjust Scissors Win = Rock
 
-convert f g = map (\(x, y) -> (f x, g y))
+part1 = sum (map (score . bimap toSign toSign) input)
 
-part1 = sum (map score (convert toSign toSign input))
-
-part2 = sum (map (score . \(x, y) -> (x, adjust x y)) (convert toSign toOutcome input))
+part2 = sum (map (score . (\(x, y) -> (x, adjust x y)) . bimap toSign toOutcome) input)

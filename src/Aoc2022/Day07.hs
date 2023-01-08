@@ -71,13 +71,13 @@ exit :: Zipper a -> Tree a
 exit (t, _) = t
 
 down :: Text -> Zipper a -> Zipper a
-down n ((x@(_ :< TreeF d f), b)) = (d ^?! ix n, (x, n) : b)
+down n (x@(_ :< TreeF d f), b) = (d ^?! ix n, (x, n) : b)
 
-emptyDir = () :< (TreeF M.empty M.empty)
+emptyDir = () :< TreeF M.empty M.empty
 
 up :: Zipper a -> Zipper a
 up (t, []) = (t, [])
-up (t, (a :< TreeF d f, n) : bs) = (a :< TreeF (d & at n .~ Just t) f, bs)
+up (t, (a :< TreeF d f, n) : bs) = (a :< TreeF (d & at n ?~ t) f, bs)
 
 toRoot :: Zipper a -> Zipper a
 toRoot z@(_, []) = z
@@ -85,7 +85,7 @@ toRoot z = toRoot (up z)
 
 adjust f (a :< t, b) = (a :< f t, b)
 
-data St = St {_tree :: Zipper ()} deriving (Show)
+newtype St = St {_tree :: Zipper ()} deriving (Show)
 
 makeLenses ''St
 
@@ -95,15 +95,15 @@ f (Down d) = tree %= down d
 f (Ls t) = mapM_ f t
   where
     f :: TraceEntry -> State St ()
-    f (TraceDir d) = tree %= adjust (dirs . at d .~ Just emptyDir)
-    f (TraceFile n s) = tree %= adjust (files . at n .~ Just s)
+    f (TraceDir d) = tree %= adjust (dirs . at d ?~  emptyDir)
+    f (TraceFile n s) = tree %= adjust (files . at n ?~ s)
 
 mkTree =
   let st = execState (traverse f input) (St (enter (() :< TreeF M.empty M.empty)))
    in exit (toRoot (st ^. tree))
 
 sumFiles :: Tree () -> Tree Int
-sumFiles s = extend f s
+sumFiles = extend f
   where
     f :: Tree () -> Int
     f (() :< TreeF d f) =
@@ -111,7 +111,7 @@ sumFiles s = extend f s
        in dsum + sum (M.elems f)
 
 collectSizes :: Tree Int -> Tree [Int]
-collectSizes s = let f (a :< TreeF d _) = a : (concat (map (extract . collectSizes) (M.elems d))) in extend f s
+collectSizes s = let f (a :< TreeF d _) = a : concatMap (extract . collectSizes) (M.elems d) in extend f s
 
 annTree = sumFiles mkTree
 

@@ -38,7 +38,7 @@ pPacket = More <$> pElem
 
 input1 = getInput "input/day13.txt" pInput
 
-input2 = sort (div1 : div2 : (concatMap (\(a, b) -> [a, b]) input1))
+input2 = sort (div1 : div2 : concatMap (\(a, b) -> [a, b]) input1)
 
 (Right div1) = P.parseOnly pPacket "[[2]]"
 

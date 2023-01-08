@@ -17,7 +17,7 @@ data Move = R | L | U | D deriving (Show)
 
 type Pt = (Int, Int)
 
-data St = St {_knot :: [Pt]} deriving (Show)
+newtype St = St {_knot :: [Pt]} deriving (Show)
 
 input :: [Move]
 input = getInput "input/day09.txt" parser

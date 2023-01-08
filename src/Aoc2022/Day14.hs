@@ -33,13 +33,13 @@ input = getInput "input/day14.txt" parser :: [[Pt]]
 
 allPts = (500, 0) : concat input
 
-min_x = minimum (allPts ^.. folded . _1)
+minX = minimum (allPts ^.. folded . _1)
 
-min_y = minimum (allPts ^.. folded . _2)
+minY = minimum (allPts ^.. folded . _2)
 
-max_x = maximum (allPts ^.. folded . _1)
+maxX = maximum (allPts ^.. folded . _1)
 
-max_y = maximum (allPts ^.. folded . _2)
+maxY = maximum (allPts ^.. folded . _2)
 
 initMap = foldl' insertRocks emptyMap input
   where
@@ -47,7 +47,7 @@ initMap = foldl' insertRocks emptyMap input
       let (x1', x2') = if x1 > x2 then (x2, x1) else (x1, x2)
           (y1', y2') = if y1 > y2 then (y2, y1) else (y1, y2)
        in M.fromList (zip [(x, y) | y <- [y1' .. y2'], x <- [x1' .. x2']] (repeat e))
-    emptyMap = fillMap ((min_x, min_y), (max_x, max_y)) Empty
+    emptyMap = fillMap ((minX, minY), (maxX, maxY)) Empty
     insertRocks m s = foldl' insertRockSegment m (zip s (tail s))
     insertRockSegment m ps = M.union (fillMap ps Rock) m
 
@@ -66,7 +66,7 @@ dropSand part s = go (500, 0)
                 case part of
                   Part1 -> Nothing
                   Part2 ->
-                    if ((y >= 0) && (y <= max_y + 1))
+                    if (y >= 0) && (y <= maxY + 1)
                       then Just Empty
                       else Just Rock
        in case (move down, move left, move right) of
@@ -76,15 +76,15 @@ dropSand part s = go (500, 0)
             (_, Just Empty, _) -> go left
             (_, _, Nothing) -> Nothing
             (_, _, Just Empty) -> go right
-            otherwise -> Just p
+            _ -> Just p
 
 res :: Part -> [Pt]
 res p = unfoldr f initMap
   where
     f s = case dropSand p s of
       Nothing -> Nothing
-      Just p -> Just (p, s & at p .~ Just Sand)
+      Just p -> Just (p, s & at p ?~ Sand)
 
 part1 = length (res Part1)
 
-part2 = 1 + (length $ (takeWhile (/= (500, 0))) (res Part2))
+part2 = 1 + length (takeWhile (/= (500, 0)) (res Part2))

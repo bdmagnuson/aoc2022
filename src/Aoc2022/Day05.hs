@@ -26,7 +26,7 @@ parser = do
   return $ Input s m
   where
     pIds = P.char ' ' *> P.takeWhile1 (P.inClass " 123456789") >> P.endOfLine
-    pStack = (fmap catMaybes . transpose) <$> many ((P.sepBy1 (pLetter <|> pNull) (P.char ' ')) <* P.endOfLine)
+    pStack = fmap catMaybes . transpose <$> many (P.sepBy1 (pLetter <|> pNull) (P.char ' ') <* P.endOfLine)
     pMove = do
       q <- P.string "move " *> P.decimal
       f <- subtract 1 <$> (P.string " from " *> P.decimal)

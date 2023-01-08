@@ -24,7 +24,7 @@ data Instr
   | Addx Int
   deriving (Show)
 
-data St = St {_regs :: Regs} deriving (Show)
+newtype St = St {_regs :: Regs} deriving (Show)
 
 makeLenses ''St
 

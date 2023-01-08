@@ -21,14 +21,14 @@ type Surface = Set (Pt, Face)
 
 input = getInput "input/day18.txt" parser
 
-parser = P.sepBy1 (toTuple <$> (P.sepBy1 P.decimal (P.char ','))) P.endOfLine
+parser = P.sepBy1 (toTuple <$> P.sepBy1 P.decimal (P.char ',')) P.endOfLine
   where
     toTuple (a : b : c : _) = (a, b, c)
 
 addPt :: Set Surface -> Pt -> Set Surface
 addPt s p = merge s (mkPoint p)
 
-mkPoint p = S.fromList (zip (repeat p) [F1, F2, F3, F1O, F2O, F3O])
+mkPoint p = S.fromList (map (p,) [F1, F2, F3, F1O, F2O, F3O])
 
 merge :: Set Surface -> Surface -> Set Surface
 merge s p =
@@ -77,7 +77,7 @@ steam =
           (x, y, z + 1),
           (x, y, z - 1)
         ]
-    inRange p@(x, y, z) = x >= -1 && x <= 21 && y >= -1 && y <= 21 && z >= -1 && z <= 21 && (not (S.member p inputSet))
+    inRange p@(x, y, z) = x >= -1 && x <= 21 && y >= -1 && y <= 21 && z >= -1 && z <= 21 && not (S.member p inputSet)
     inputSet = S.fromList input
 
 part1 = S.size faces

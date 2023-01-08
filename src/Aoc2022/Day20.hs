@@ -33,7 +33,7 @@ moveV v f s =
       t' = (f + s) `mod` (len - 1)
       t = if t' == 0 then len - 1 else t'
    in if t > f
-        then V.concat [vslice 0 (f - 1) v, vslice (f + 1) (t) v, V.singleton (v V.! f), vslice (t + 1) (V.length v - 1) v]
+        then V.concat [vslice 0 (f - 1) v, vslice (f + 1) t v, V.singleton (v V.! f), vslice (t + 1) (V.length v - 1) v]
         else V.concat [vslice 0 (t - 1) v, V.singleton (v V.! f), vslice t (f - 1) v, vslice (f + 1) (V.length v - 1) v]
 
 answer vec res =

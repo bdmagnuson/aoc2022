@@ -21,10 +21,10 @@ import Data.Text qualified as T
 
 type Node = String
 
-(p, g) = (getInput "input/day16.txt" parser)
+(p, g) = getInput "input/day16.txt" parser
 
 parser = do
-  (l, f, n) <- unzip3 <$> (P.sepBy1 pLine P.endOfLine)
+  (l, f, n) <- unzip3 <$> P.sepBy1 pLine P.endOfLine
   return (M.fromList (zip l f), M.fromList (zip l n))
   where
     pLine :: P.Parser (Node, Int, [Node])
@@ -34,8 +34,8 @@ parser = do
       P.string " has flow rate="
       f <- P.decimal
       P.string "; tunnels lead to valves " <|> P.string "; tunnel leads to valve "
-      n <- (P.sepBy pLabel (P.string ", "))
-      return $ (l, f, n)
+      n <- P.sepBy pLabel (P.string ", ")
+      return (l, f, n)
     pLabel = T.unpack <$> P.takeWhile (P.inClass ['A' .. 'Z'])
 
 type MinHeap = H.MinPrioHeap Int Node
@@ -55,9 +55,9 @@ nodeDistance' f t = go S.empty (newNode 1 f)
       where
         Just (d, n) = H.viewHead h
         v' = S.insert n v
-        h' = (H.drop 1 h) `H.union` (newNode (d + 1) n)
+        h' = H.drop 1 h `H.union` newNode (d + 1) n
     newNode :: Int -> Node -> MinHeap
-    newNode d n = H.fromList (zip (repeat d) (g ^?! ix n))
+    newNode d n = H.fromList (map (d,) (g ^?! ix n))
 
 -- Return best score with 'n' minutes to go visting 't' nodes
 solve n t = go n (0, 0) "AA" t
@@ -70,7 +70,7 @@ solve n t = go n (0, 0) "AA" t
         f t =
           let dist = nodeDistance n t + 1
            in if dist >= m
-                then (total + vent * m)
+                then total + vent * m
                 else go (m - dist) (total + vent * dist, vent + p ^?! ix t) t (S.delete t s)
 
 targets = S.fromList (M.keys (M.filter (> 0) p))

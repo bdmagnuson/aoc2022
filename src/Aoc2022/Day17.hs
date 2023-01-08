@@ -66,11 +66,11 @@ push = do
   let rrock = S.map (\(x, y) -> (x + 1, y)) rock
   case d of
     L -> do
-      if any (< 0) (lrock ^.. folded . _1) || (notNull (S.intersection lrock f))
+      if any (< 0) (lrock ^.. folded . _1) || notNull (S.intersection lrock f)
         then return ()
         else falling .= lrock
     R -> do
-      if any (== 7) (rrock ^.. folded . _1) || (notNull (S.intersection rrock f))
+      if elem 7 (rrock ^.. folded . _1) || notNull (S.intersection rrock f)
         then return ()
         else falling .= rrock
 
@@ -79,19 +79,19 @@ fall = do
   rock <- use falling
   f <- use fixed
   let drock = S.map (\(x, y) -> (x, y - 1)) rock
-  if any (< 0) (drock ^.. folded . _2) || (notNull (S.intersection drock f))
+  if any (< 0) (drock ^.. folded . _2) || notNull (S.intersection drock f)
     then do
       fixed %= S.union rock
       newRock
     else falling .= drock
-  use total >>= return
+  use total
 
 rockHeight :: St -> Integer
-rockHeight s = (fromJust $ maximumOf (folded . _2) (s ^. fixed)) + 1
+rockHeight s = fromJust (maximumOf (folded . _2) (s ^. fixed)) + 1
 
 newRock :: State St ()
 newRock = do
-  c <- uses fixed (fromMaybe (-1) . (maximumOf (folded . _2)))
+  c <- uses fixed (fromMaybe (-1) . maximumOf (folded . _2))
   (s :| ss) <- use nextShape
   nextShape .= head ss :| tail ss
   let ns = case s of
@@ -105,8 +105,8 @@ newRock = do
 
 initState =
   let (w : ws) = input
-      wind = (NE.cycle (w :| ws))
-      shapes = (NE.cycle (H4 :| [Cross, Ell, V4, Square]))
+      wind = NE.cycle (w :| ws)
+      shapes = NE.cycle (H4 :| [Cross, Ell, V4, Square])
    in St S.empty S.empty wind shapes 0
 
 step :: St -> St
@@ -144,17 +144,17 @@ foo x =
   let aaa = map rockHeight (take (leadin + period) runRocks)
       (f, s) = splitAt leadin aaa
       start = last f
-      extra = map (\x -> x - (last f)) s
-      (d, m) = (x - (fromIntegral leadin)) `divMod` (fromIntegral period)
+      extra = map (\x -> x - last f) s
+      (d, m) = (x - fromIntegral leadin) `divMod` fromIntegral period
    in if m == 0
-        then start + d * (last extra)
-        else start + d * (last extra) + (extra !! ((fromIntegral m) - 1))
+        then start + d * last extra
+        else start + d * last extra + (extra !! (fromIntegral m - 1))
 
 b = map rockHeight (take 5000 runRocks)
 
 c = zipWith (-) b (drop 1 b)
 
-d = (autocorrelation (V.fromList (map fromIntegral c))) ^. _1
+d = autocorrelation (V.fromList (map fromIntegral c)) ^. _1
 
 e = zip [0 ..] (V.toList d)
 

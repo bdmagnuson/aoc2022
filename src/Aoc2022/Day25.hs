@@ -31,9 +31,9 @@ parser = P.sepBy pLine P.endOfLine
 
 i2s :: Int -> Number
 i2s s =
-  let diff = reverse $ (0 : (scanl1 (+) $ takeWhile (< s) (map (* 2) (iterate (* 5) 1))))
+  let diff = reverse (0 : scanl1 (+) (takeWhile (< s) (map (* 2) (iterate (* 5) 1))))
       cycle = reverse $ take (length diff) (iterate (* 5) 1)
-      fixup = reverse $ take (length diff) (True : (repeat False))
+      fixup = reverse $ take (length diff) (True : repeat False)
    in zipWith3 (f s) diff cycle fixup
 
 f s d c l =

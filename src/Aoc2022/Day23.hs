@@ -10,7 +10,7 @@ import Control.Lens hiding (Empty)
 import Data.Attoparsec.Text qualified as P
 import Data.Map (Map)
 import Data.Map qualified as M
-import Data.Maybe (catMaybes)
+import Data.Maybe (mapMaybe)
 import Data.Set (Set)
 import Data.Set qualified as S
 import Debug.Trace
@@ -19,7 +19,7 @@ data Pos = Elf | Empty deriving (Show, Eq, Ord)
 
 data Dir = N | W | E | S deriving (Show)
 
-data Board = Board (Set (Int, Int)) deriving (Eq)
+newtype Board = Board (Set (Int, Int)) deriving (Eq)
 
 instance Show Board where
   show (Board b) =
@@ -41,7 +41,7 @@ parser = shape <$> P.sepBy pLine P.endOfLine
     shape m =
       let h = length m
           w = length (head m)
-       in Board . S.fromList . map fst . filter (\(_, b) -> b == Elf) $ (zip [(y, x) | y <- [0 .. h - 1], x <- [0 .. w - 1]] (concat m))
+       in Board . S.fromList . map fst . filter (\(_, b) -> b == Elf) $ zip [(y, x) | y <- [0 .. h - 1], x <- [0 .. w - 1]] (concat m)
 
 input = getInput "input/day23.txt" parser
 
@@ -58,12 +58,12 @@ step d (Board b) = Board (doMove . checkMoves $ proposeMoves)
       let counts :: Map (Int, Int) Int
           counts = foldl (\acc (_, p) -> acc & at p . non 0 %~ succ) M.empty m
           clashes = M.filter (== 1) counts
-       in filter (((flip M.member) clashes) . snd) m
+       in filter (flip M.member clashes . snd) m
 
     proposeMoves :: [Move]
     proposeMoves =
       let elves = S.elems b
-       in catMaybes $ map (proposeMove d) elves
+       in mapMaybe (proposeMove d) elves
     proposeMove :: [Dir] -> (Int, Int) -> Maybe Move
     proposeMove [] _ = Nothing
     proposeMove (d : ds) p@(y, x) =
@@ -82,7 +82,7 @@ step d (Board b) = Board (doMove . checkMoves $ proposeMoves)
               S -> [s, sw, se]
               E -> [e, se, ne]
               W -> [w, nw, sw]
-       in case (all (\x -> not (S.member x b)) dirs, any (\x -> S.member x b) p') of
+       in case (all (\x -> not (S.member x b)) dirs, any (`S.member` b) p') of
             (True, _) -> Nothing
             (False, True) -> proposeMove ds p
             (False, False) -> Just (p, head p')
@@ -91,7 +91,7 @@ rounds :: Board -> [Board]
 rounds = go [N, S, W, E]
   where
     go :: [Dir] -> Board -> [Board]
-    go d b = b : (go (tail d ++ [head d]) (step d b))
+    go d b = b : go (tail d ++ [head d]) (step d b)
 
 score (Board b) =
   let k = S.elems b
@@ -100,13 +100,13 @@ score (Board b) =
       max_x = maximum (k ^.. folded . _2)
       max_y = maximum (k ^.. folded . _1)
       area = (max_x - min_x + 1) * (max_y - min_y + 1)
-   in area - (S.size b)
+   in area - S.size b
 
 complete :: Board -> Int
 complete b = go 1 (rounds b)
   where
     go n (b1 : b2 : bs) = if b1 == b2 then n else go (n + 1) (b2 : bs)
 
-part1 = score ((rounds input) !! 10)
+part1 = score (rounds input !! 10)
 
 part2 = complete input

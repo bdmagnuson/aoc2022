@@ -25,7 +25,7 @@ parser = do
   return (map, dir)
   where
     pLine = P.many1 ((Null <$ P.char ' ') <|> (Empty <$ P.char '.') <|> (Wall <$ P.char '#'))
-    f m = M.fromList . (filter (\(_, d) -> d /= Null)) . concat $ zipWith (\y r -> zipWith (\x e -> ((y, x), e)) [0 ..] r) [0 ..] m
+    f m = M.fromList . filter (\(_, d) -> d /= Null) . concat $ zipWith (\y r -> zipWith (\x e -> ((y, x), e)) [0 ..] r) [0 ..] m
 
 (board, dir) = getInput "input/day22.txt" parser
 
@@ -89,19 +89,19 @@ step (f, y, x) E = ((f, y, x + 1), E)
 coords :: [(Integer, Integer)]
 coords = M.keys board
 
-max_x = maximum (coords ^.. folded . _2)
+maxX = maximum (coords ^.. folded . _2)
 
-max_y = maximum (coords ^.. folded . _1)
+maxY = maximum (coords ^.. folded . _1)
 
-y_edges :: [(Integer, Integer)]
-y_edges = map f [0 .. max_y - 1]
+yEdges :: [(Integer, Integer)]
+yEdges = map f [0 .. maxY - 1]
   where
     f y =
       let row = map snd $ filter (\(y', _) -> y' == y) coords
        in (minimum row, maximum row)
 
-x_edges :: [(Integer, Integer)]
-x_edges = map f [0 .. max_x - 1]
+xEdges :: [(Integer, Integer)]
+xEdges = map f [0 .. maxX - 1]
   where
     f x =
       let col = map fst $ filter (\(_, x') -> x' == x) coords
@@ -119,7 +119,7 @@ instr2dir (i : is) d =
     (R, S) -> instr2dir is W
     (R, E) -> instr2dir is S
     (R, W) -> instr2dir is N
-    (Walk n, _) -> (replicate (fromIntegral n) d) ++ (instr2dir is d)
+    (Walk n, _) -> replicate (fromIntegral n) d ++ instr2dir is d
 
 walk2 :: ((Integer, Integer, Integer), Dir)
 walk2 = go ((6, 0, 0), E) dir
@@ -146,7 +146,7 @@ walk2 = go ((6, 0, 0), E) dir
             Just Wall -> go (p, d) (Walk (n - 1) : is)
 
 walk :: (Integer, Integer)
-walk = foldl go (1, fst $ y_edges !! 0) (instr2dir dir E)
+walk = foldl go (1, fst $ head yEdges) (instr2dir dir E)
   where
     go (y, x) d =
       let foo = case d of
@@ -154,7 +154,7 @@ walk = foldl go (1, fst $ y_edges !! 0) (instr2dir dir E)
               Just Wall -> (y, x)
               Just Empty -> (y - 1, x)
               Nothing ->
-                let p = (snd (x_edges !! ((fromIntegral x) - 0)), x)
+                let p = (snd (xEdges !! fromIntegral x), x)
                  in case board ^? ix p of
                       Just Wall -> (y, x)
                       Just Empty -> p
@@ -162,7 +162,7 @@ walk = foldl go (1, fst $ y_edges !! 0) (instr2dir dir E)
               Just Wall -> (y, x)
               Just Empty -> (y + 1, x)
               Nothing ->
-                let p = (fst (x_edges !! ((fromIntegral x) - 0)), x)
+                let p = (fst (xEdges !! fromIntegral x), x)
                  in case board ^? ix p of
                       Just Wall -> (y, x)
                       Just Empty -> p
@@ -170,7 +170,7 @@ walk = foldl go (1, fst $ y_edges !! 0) (instr2dir dir E)
               Just Wall -> (y, x)
               Just Empty -> (y, x + 1)
               Nothing ->
-                let p = (y, fst (y_edges !! ((fromIntegral y) - 0)))
+                let p = (y, fst (yEdges !! fromIntegral y))
                  in case board ^? ix p of
                       Just Wall -> (y, x)
                       Just Empty -> p
@@ -178,7 +178,7 @@ walk = foldl go (1, fst $ y_edges !! 0) (instr2dir dir E)
               Just Wall -> (y, x)
               Just Empty -> (y, x - 1)
               Nothing ->
-                let p = (y, snd (y_edges !! ((fromIntegral y) - 0)))
+                let p = (y, snd (yEdges !! fromIntegral y))
                  in case board ^? ix p of
                       Just Wall -> (y, x)
                       Just Empty -> p
